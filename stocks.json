@@ -1,0 +1,21 @@
+{
+  "indices": {
+    "^NSEI": "NIFTY 50 Index",
+    "^BSESN": "SENSEX Index"
+  },
+  "stocks": {
+    "RELIANCE.NS": "Reliance Industries",
+    "TCS.NS": "Tata Consultancy Services",
+    "INFY.NS": "Infosys",
+    "HDFCBANK.NS": "HDFC Bank",
+    "ICICIBANK.NS": "ICICI Bank",
+    "HINDUNILVR.NS": "Hindustan Unilever",
+    "ITC.NS": "ITC Limited",
+    "SBIN.NS": "State Bank of India",
+    "BAJFINANCE.NS": "Bajaj Finance",
+    "WIPRO.NS": "Wipro",
+    "TATATECH.NS": "Tata Technologies",
+    "MARUTI.NS": "Maruti Suzuki",
+    "ADANIENT.NS": "Adani Enterprises"
+  }
+}

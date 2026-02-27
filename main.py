@@ -12,7 +12,7 @@ from email.mime.text import MIMEText
 
 import requests
 import yfinance as yf
-from google import genai
+from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -59,8 +59,8 @@ def get_market_news():
     if NEWS_API_KEY:
         try:
             url = (
-                "https://newsapi.org/v2/top-headlines"
-                f"?country=in&category=business&pageSize=15&apiKey={NEWS_API_KEY}"
+                "https://newsapi.org/v2/everything"
+    f"?q=india+stock+market+NSE+BSE&language=en&pageSize=15&apiKey={NEWS_API_KEY}"
             )
             response = requests.get(url, timeout=10)
             data     = response.json()
@@ -87,9 +87,9 @@ def get_market_news():
 
 
 def analyze_with_gemini(market_data, news):
-    print("🤖 Asking Gemini to analyze...")
+    print("🤖 Asking Groq to analyze...")
 
-    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     today  = datetime.datetime.now().strftime("%A, %d %B %Y")
 
     prompt = f"""
@@ -104,34 +104,34 @@ TODAY'S NEWS:
 
 Provide your response in this exact HTML structure:
 
-<h2>1. 📊 Market Recap</h2>
+<h2>1. Market Recap</h2>
 <p>How did the market perform yesterday? Key movers and why.</p>
 
-<h2>2. 📰 Key News To Watch</h2>
+<h2>2. Key News To Watch</h2>
 <p>Top 5 news stories that could move the market today and why they matter.</p>
 
-<h2>3. 🎯 Companies To Watch Today</h2>
+<h2>3. Companies To Watch Today</h2>
 <p>3-5 specific stocks likely to move today, whether UP or DOWN, and why.</p>
 
-<h2>4. 🧠 Today's Strategy</h2>
+<h2>4. Today's Strategy</h2>
 <p>Overall sentiment (Bullish/Bearish/Neutral) and what a retail investor should consider.</p>
 
-<h2>5. 🔍 Pre-News Movers</h2>
+<h2>5. Pre-News Movers</h2>
 <p>Any stocks that moved before related news became public — possible smart money signals.</p>
 
-<h2>6. ⚠️ Risk Alerts</h2>
+<h2>6. Risk Alerts</h2>
 <p>Key risks to watch out for today.</p>
 
-Be specific with company names and numbers. Use ₹ for prices.
+Be specific with company names and numbers. Use Rs for prices.
 """
 
-    response = client.models.generate_content(
-        model="gemini-2.0-flash-lite",
-        contents=prompt
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=2500
     )
     print("   ✅ Analysis done!")
-    return response.text
-
+    return response.choices[0].message.content
 
 def build_email_html(analysis):
     today = datetime.datetime.now().strftime("%A, %d %B %Y")
